@@ -22,10 +22,10 @@ The codebase for modelling taboo trade-off aversion in choice behaviours using M
 In case you want to replicate the results from our paper, you should follow the next steps:
 
 1. Download the two stated preference datasets [here](#).
-2. Run the `\src\utils\preprocess_exp1.R` and `\src\utils\preprocess_exp2.R` scripts to preprocess the `health insurance` and `organ transplantation` datasets, respectively.
-3. To replicate the results of the `health insurance` experiment, run the `mnl_benchmark.R`, `mnl_ttoa.R`, and `lc_ttoa.R` scripts to estimate all models in the `\src\experiment1` folder.
-4. To replicate the results of the `organ transplantation` experiment, run the `mnl_benchmark.R`, `mnl_ttoa.R`, and `lc_ttoa.R` scripts to estimate all models in the `\src\experiment2` folder.
-5. Run the 'post_estimation.R' scripts to compute the Likelihood Ratio Statistic between `mnl_benchmark.R` and `mnl_ttoa.R` and Willingness-To-Pay estimates with standard errors using the Delta method for each respective experiment.
+2. Run the `\src\utils\preprocess_exp1.R` and `\src\utils\preprocess_exp2.R` scripts to preprocess the *health insurance* and *organ transplantation* datasets, respectively.
+3. To replicate the results of the *health insurance* experiment, run the `mnl_benchmark.R`, `mnl_ttoa.R`, and `lc_ttoa.R` scripts to estimate all models in the `\src\experiment1` folder.
+4. To replicate the results of the *organ transplantation* experiment, run the `mnl_benchmark.R`, `mnl_ttoa.R`, and `lc_ttoa.R` scripts to estimate all models in the `\src\experiment2` folder.
+5. Run the `post_estimation.R` scripts to compute the Likelihood Ratio Statistic between `mnl_benchmark.R` and `mnl_ttoa.R` and Willingness-To-Pay estimates with standard errors using the Delta method for each respective experiment.
 
 ## Citation
 
