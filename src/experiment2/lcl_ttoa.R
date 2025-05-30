@@ -1,10 +1,28 @@
-############################################################
-# Experiment 2 "Organ Transplantation Policy Decisions":
-# Estimating the LC model with three TTOA-classes.
-# Three alternatives: A1, A2, and A3 (latter is status quo).
-############################################################
+#####################################################################
+#
+# Taboo trade-off aversion in choice behaviours: a discrete choice
+# model and application to health-related decisions
+#
+# Authors: NVR Smeele, S van Cranenburgh, B Donkers, MH Schermer,
+#          EW de Bekker-Grob
+#
+# Affiliations of the corresponding author:
+#          Erasmus School of Health Policy & Management,
+#          Erasmus University Rotterdam,
+#          Erasmus Choice Modelling Centre
+#
+# Discrete Choice Experiment: New Organ Transplantation Policy
+#
+# Model: Latent Class Logit (LCL) with latent class parameterized by
+#        the taboo trade-off aversion (TTOA) specification
+#
+# v1.0 (May, 2025)
+#
+# Corresponding author: Nicholas Smeele (smeele@eshpm.eur.nl)
+#
+#####################################################################
 
-# Reset the global environment
+# Reset R-environment
 rm(list = ls())
 
 # Load library
@@ -15,37 +33,40 @@ apollo_initialise()
 
 # Set core controls
 apollo_control = list(
-  modelName       = "TTOA-LC",
-  modelDescr      = "TTOA-LC model with three classes",
-  indivID         = "RESPID",
+  modelName       = "LCL-TTOA",
+  modelDescr      = "LCL model with taboo params across classes",
+  indivID         = "ID",
   nCores          = 5,
   seed            = 100,
-  outputDirectory = "./src/experiment2/lc_ttoa"
+  outputDirectory = "./src/experiment2/results/lcl_ttoa"
 )
 
-# Load data --> change path_data to location of data file on your local computer
+# Load data
 path_data = "./data/experiment2/organtransplantation_dce.csv"
 database = read.csv(path_data, header=TRUE)
 
-# Define model parameters; vector of parameters, including any that are kept fixed in estimation
+# Initialise model params
 apollo_beta=c(# Class 1
               asc_sq_1       = 0,
               b_deaths_1     = 0,
               b_qol_1        = 0,
               b_premium_1    = 0,
               b_taboo_1      = 0,
+
               # Class 2
               asc_sq_2       = 0,
               b_deaths_2     = 0,
               b_qol_2        = 0,
               b_premium_2    = 0,
               b_taboo_2      = 0,
+
               # Class 3
               asc_sq_3       = 0,
               b_deaths_3     = 0,
               b_qol_3        = 0,
               b_premium_3    = 0,
               b_taboo_3      = 0,
+
               # Class membership
               delta_1          = 0,
               gamma_age_med_1  = 0,
@@ -53,12 +74,14 @@ apollo_beta=c(# Class 1
               gamma_inc_med_1  = 0,
               gamma_inc_high_1 = 0,
               gamma_female_1   = 0,
+
               delta_2          = 0,
               gamma_age_med_2  = 0,
               gamma_age_high_2  = 0,
               gamma_inc_med_2  = 0,
               gamma_inc_high_2 = 0,
               gamma_female_2   = 0,
+
               delta_3          = 0,
               gamma_age_med_3  = 0,
               gamma_age_high_3  = 0,
@@ -67,7 +90,6 @@ apollo_beta=c(# Class 1
               gamma_female_3   = 0
               )
 
-# Vector with names (in quotes) of parameters to be kept fixed at their starting value in apollo_beta, use apollo_beta_fixed = c() if none
 apollo_fixed = c("delta_3", "gamma_age_med_3", "gamma_age_high_3", "gamma_inc_med_3", "gamma_inc_high_3", "gamma_female_3")
 
 
@@ -83,13 +105,13 @@ apollo_lcPars=function(apollo_beta, apollo_inputs){
   # Utilities of class allocation model
   V=list()
   V[["class_1"]] = delta_1 + gamma_age_med_1 * AGE_2 + gamma_age_high_1 * AGE_3 + gamma_inc_med_1 * HH_INC_2 +
-                   gamma_inc_high_1 * HH_INC_3 + gamma_female_1 * GENDER
+                   gamma_inc_high_1 * HH_INC_3 + gamma_female_1 * GENDER_2
 
   V[["class_2"]] = delta_2 + gamma_age_med_2 * AGE_2 + gamma_age_high_2 * AGE_3 + gamma_inc_med_2 * HH_INC_2 +
-                   gamma_inc_high_2 * HH_INC_3 + gamma_female_2 * GENDER
+                   gamma_inc_high_2 * HH_INC_3 + gamma_female_2 * GENDER_2
 
   V[["class_3"]] = delta_3 + gamma_age_med_3 * AGE_2 + gamma_age_high_3 * AGE_3 + gamma_inc_med_3 * HH_INC_2 +
-                   gamma_inc_high_3 * HH_INC_3 + gamma_female_3 * GENDER
+                   gamma_inc_high_3 * HH_INC_3 + gamma_female_3 * GENDER_2
 
   # Settings for class allocation models
   classAlloc_settings = list(

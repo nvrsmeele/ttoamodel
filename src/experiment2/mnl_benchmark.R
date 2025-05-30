@@ -1,10 +1,27 @@
-############################################################
-# Experiment 2 "Organ Transplantation Policy Decisions":
-# Estimating the benchmark MNL model.
-# Three alternatives: A1, A2, and A3 (latter is status quo).
-############################################################
+#####################################################################
+#
+# Taboo trade-off aversion in choice behaviours: a discrete choice
+# model and application to health-related decisions
+#
+# Authors: NVR Smeele, S van Cranenburgh, B Donkers, MH Schermer,
+#          EW de Bekker-Grob
+#
+# Affiliations of the corresponding author:
+#          Erasmus School of Health Policy & Management,
+#          Erasmus University Rotterdam,
+#          Erasmus Choice Modelling Centre
+#
+# Discrete Choice Experiment: New Organ Transplantation Policy
+#
+# Model: Benchmark Multinomial Logit (MNL)
+#
+# v1.0 (May, 2025)
+#
+# Corresponding author: Nicholas Smeele (smeele@eshpm.eur.nl)
+#
+#####################################################################
 
-# Reset the global environment
+# Reset R-environment
 rm(list = ls())
 
 # Load library
@@ -18,10 +35,10 @@ apollo_control = list(
   modelName       = "Benchmark_MNL",
   modelDescr      = "Benchmark MNL model",
   indivID         = "RESPID",
-  outputDirectory = "./src/experiment2/mnl_benchmark"
+  outputDirectory = "./src/experiment2/results/mnl_benchmark"
 )
 
-# Load data --> change path_data to location of data file on your local computer
+# Load data
 path_data = "./data/experiment2/organtransplantation_dce.csv"
 database = read.csv(path_data, header=TRUE)
 
@@ -31,7 +48,6 @@ apollo_beta=c(asc_sq       = 0,
               b_qol        = 0,
               b_premium    = 0)
 
-# Fixed params: should be in quotes (optional)
 apollo_fixed = c()
 
 # Checkpoint for model inputs

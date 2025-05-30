@@ -1,10 +1,27 @@
-###############################################################
-# Experiment 1 "Health Insurance Policy Decisions":
-# Estimating the benchmark MNL model.
-# Two alternatives: A1 and A2.
-###############################################################
+#####################################################################
+#
+# Taboo trade-off aversion in choice behaviours: a discrete choice
+# model and application to health-related decisions
+#
+# Authors: NVR Smeele, S van Cranenburgh, B Donkers, MH Schermer,
+#          EW de Bekker-Grob
+#
+# Affiliations of the corresponding author:
+#          Erasmus School of Health Policy & Management,
+#          Erasmus University Rotterdam,
+#          Erasmus Choice Modelling Centre
+#
+# Discrete Choice Experiment: New Health Insurance Policy
+#
+# Model: Benchmark Multinomial Logit (MNL)
+#
+# v1.0 (May, 2025)
+#
+# Corresponding author: Nicholas Smeele (smeele@eshpm.eur.nl)
+#
+#####################################################################
 
-# Reset the global environment
+# Reset R-environment
 rm(list = ls())
 
 # Load library
@@ -18,10 +35,10 @@ apollo_control = list(
   modelName       = "Benchmark_MNL",
   modelDescr      = "Benchmark MNL model",
   indivID         = "RESPID",
-  outputDirectory = "./src/experiment1/mnl_benchmark"
+  outputDirectory = "./src/experiment1/results/mnl_benchmark"
 )
 
-# Load data --> change path_data to location of data file on your local computer
+# Load data
 path_data = "./data/experiment1/healthinsurance_dce.csv"
 database = read.csv(path_data, header=TRUE)
 
@@ -29,7 +46,6 @@ database = read.csv(path_data, header=TRUE)
 apollo_beta=c(b_deaths     = 0,
               b_premium    = 0)
 
-# Fixed params: should be in quotes (optional)
 apollo_fixed = c()
 
 # Checkpoint for model inputs
@@ -44,7 +60,7 @@ apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimat
 
   # Create list of choice probabilities P
   P = list()
-  
+
   # List of utilities: these must use the same names as in mnl_settings, order is irrelevant
   V = list()
   V[["A1"]]  = b_deaths * A1_DEATHS + b_premium * A1_PREM

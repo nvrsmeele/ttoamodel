@@ -1,10 +1,27 @@
-###############################################################
-# Experiment 1 "Health Insurance Policy Decisions":
-# Estimating the TTOA-MNL model.
-# Two alternatives: A1 and A2.
-###############################################################
+#####################################################################
+#
+# Taboo trade-off aversion in choice behaviours: a discrete choice
+# model and application to health-related decisions
+#
+# Authors: NVR Smeele, S van Cranenburgh, B Donkers, MH Schermer,
+#          EW de Bekker-Grob
+#
+# Affiliations of the corresponding author:
+#          Erasmus School of Health Policy & Management,
+#          Erasmus University Rotterdam,
+#          Erasmus Choice Modelling Centre
+#
+# Discrete Choice Experiment: New Health Insurance Policy
+#
+# Model: Multinomial Logit (MNL) with taboo trade-off aversion (TTOA)
+#
+# v1.0 (May, 2025)
+#
+# Corresponding author: Nicholas Smeele (smeele@eshpm.eur.nl)
+#
+#####################################################################
 
-# Reset the global environment
+# Reset R-environment
 rm(list = ls())
 
 # Load library
@@ -15,22 +32,22 @@ apollo_initialise()
 
 # Set core controls
 apollo_control = list(
-  modelName       = "TTOA_MNL",
+  modelName       = "MNL_TTOA",
   modelDescr      = "TTOA-MNL model",
   indivID         = "RESPID",
-  outputDirectory = "./src/experiment1/mnl_ttoa"
+  outputDirectory = "./src/experiment1/results/mnl_ttoa"
 )
 
-# Load data --> change path_data to location of data file on your local computer
+# Load data
 path_data = "./data/experiment1/healthinsurance_dce.csv"
 database = read.csv(path_data, header=TRUE)
 
 # Initialise model params
 apollo_beta=c(b_deaths     = 0,
               b_premium    = 0,
-              b_taboo      = 0)
+              b_taboo_neg  = 0,
+              b_taboo_pos  = 0)
 
-# Fixed params: should be in quotes (optional)
 apollo_fixed = c()
 
 # Checkpoint for model inputs
@@ -48,8 +65,8 @@ apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimat
   
   # List of utilities: these must use the same names as in mnl_settings, order is irrelevant
   V = list()
-  V[["A1"]]  = b_deaths * A1_DEATHS + b_premium * A1_PREM + b_taboo * A1_TABOO
-  V[["A2"]]  = b_deaths * A2_DEATHS + b_premium * A2_PREM + b_taboo * A2_TABOO
+  V[["A1"]]  = b_deaths * A1_DEATHS + b_premium * A1_PREM + b_taboo_neg * A1_TABOO_NEG + b_taboo_pos * A1_TABOO_POS
+  V[["A2"]]  = b_deaths * A2_DEATHS + b_premium * A2_PREM + b_taboo_neg * A2_TABOO_NEG + b_taboo_pos * A2_TABOO_POS
   
   # Initialise settings for MNL model component
   mnl_settings = list(
