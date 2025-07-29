@@ -13,10 +13,9 @@
 #
 # Discrete Choice Experiment: New Organ Transplantation Policy
 #
-# Model: Latent Class Logit (LCL) with latent class parameterized by
-#        the taboo trade-off aversion (TTOA) specification
+# Model: Latent Class Logit (LCL) with RUM classes
 #
-# v1.0 (May, 2025)
+# v1.0 (July, 2025)
 #
 # Corresponding author: Nicholas Smeele (smeele@eshpm.eur.nl)
 #
@@ -33,16 +32,16 @@ apollo_initialise()
 
 # Set core controls
 apollo_control = list(
-  modelName       = "LCL-TTOA",
-  modelDescr      = "LCL model with taboo params across classes",
-  indivID         = "ID",
+  modelName       = "RUM-LC",
+  modelDescr      = "LC model with rum params across classes",
+  indivID         = "RESPID",
   nCores          = 5,
   seed            = 100,
-  outputDirectory = "./src/experiment2/results/lcl_ttoa"
+  outputDirectory = "./src/experiment2/results/lc_rum"
 )
 
 # Load data
-path_data = "./data/experiment2/organtransplantation_dce.csv"
+path_data = "./data/experiment2/processed_data/main/organtransplantation_dce.csv"
 database = read.csv(path_data, header=TRUE)
 
 # Initialise model params
@@ -51,71 +50,52 @@ apollo_beta=c(# Class 1
               b_deaths_1     = 0,
               b_qol_1        = 0,
               b_premium_1    = 0,
-              b_taboo_1      = 0,
 
               # Class 2
               asc_sq_2       = 0,
               b_deaths_2     = 0,
               b_qol_2        = 0,
               b_premium_2    = 0,
-              b_taboo_2      = 0,
 
               # Class 3
               asc_sq_3       = 0,
               b_deaths_3     = 0,
               b_qol_3        = 0,
               b_premium_3    = 0,
-              b_taboo_3      = 0,
+
+              # Class 4
+              asc_sq_4       = 0,
+              b_deaths_4     = 0,
+              b_qol_4        = 0,
+              b_premium_4    = 0,
 
               # Class membership
               delta_1          = 0,
-              gamma_age_med_1  = 0,
-              gamma_age_high_1  = 0,
-              gamma_inc_med_1  = 0,
-              gamma_inc_high_1 = 0,
-              gamma_female_1   = 0,
-
               delta_2          = 0,
-              gamma_age_med_2  = 0,
-              gamma_age_high_2  = 0,
-              gamma_inc_med_2  = 0,
-              gamma_inc_high_2 = 0,
-              gamma_female_2   = 0,
-
               delta_3          = 0,
-              gamma_age_med_3  = 0,
-              gamma_age_high_3  = 0,
-              gamma_inc_med_3  = 0,
-              gamma_inc_high_3 = 0,
-              gamma_female_3   = 0
+              delta_4          = 0
               )
 
-apollo_fixed = c("delta_3", "gamma_age_med_3", "gamma_age_high_3", "gamma_inc_med_3", "gamma_inc_high_3", "gamma_female_3")
-
+apollo_fixed = c("delta_4")
 
 # Define latent class components
 apollo_lcPars=function(apollo_beta, apollo_inputs){
   lcpars = list()
-  lcpars[["asc_sq"]] = list(asc_sq_1, asc_sq_2, asc_sq_3)
-  lcpars[["b_deaths"]] = list(b_deaths_1, b_deaths_2, b_deaths_3)
-  lcpars[["b_qol"]] = list(b_qol_1, b_qol_2, b_qol_3)
-  lcpars[["b_premium"]] = list(b_premium_1, b_premium_2, b_premium_3)
-  lcpars[["b_taboo"]] = list(b_taboo_1, b_taboo_2, b_taboo_3)
-  
+  lcpars[["asc_sq"]] = list(asc_sq_1, asc_sq_2, asc_sq_3, asc_sq_4)
+  lcpars[["b_deaths"]] = list(b_deaths_1, b_deaths_2, b_deaths_3, b_deaths_4)
+  lcpars[["b_qol"]] = list(b_qol_1, b_qol_2, b_qol_3, b_qol_4)
+  lcpars[["b_premium"]] = list(b_premium_1, b_premium_2, b_premium_3, b_premium_4)
+
   # Utilities of class allocation model
   V=list()
-  V[["class_1"]] = delta_1 + gamma_age_med_1 * AGE_2 + gamma_age_high_1 * AGE_3 + gamma_inc_med_1 * HH_INC_2 +
-                   gamma_inc_high_1 * HH_INC_3 + gamma_female_1 * GENDER_2
-
-  V[["class_2"]] = delta_2 + gamma_age_med_2 * AGE_2 + gamma_age_high_2 * AGE_3 + gamma_inc_med_2 * HH_INC_2 +
-                   gamma_inc_high_2 * HH_INC_3 + gamma_female_2 * GENDER_2
-
-  V[["class_3"]] = delta_3 + gamma_age_med_3 * AGE_2 + gamma_age_high_3 * AGE_3 + gamma_inc_med_3 * HH_INC_2 +
-                   gamma_inc_high_3 * HH_INC_3 + gamma_female_3 * GENDER_2
+  V[["class_1"]] = delta_1
+  V[["class_2"]] = delta_2
+  V[["class_3"]] = delta_3
+  V[["class_4"]] = delta_4
 
   # Settings for class allocation models
   classAlloc_settings = list(
-    classes      = c(class_1=1, class_2=2, class_3=3),
+    classes      = c(class_1=1, class_2=2, class_3=3, class_4=4),
     avail        = 1,
     utilities    = V
   )
@@ -144,11 +124,11 @@ apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimat
     choiceVar     = FINAL_CHOICE
   )
 
-  for(s in 1:3){
+  for(s in 1:4){
     V=list()
-    V[["A1"]] = b_deaths[[s]] * A1_DEATHS + b_qol[[s]] * A1_QOL + b_premium[[s]] * A1_PREM + b_taboo[[s]] * A1_TABOO
-    V[["A2"]] = b_deaths[[s]] * A2_DEATHS + b_qol[[s]] * A2_QOL + b_premium[[s]] * A2_PREM + b_taboo[[s]] * A2_TABOO
-    V[["A3"]] = asc_sq[[s]] + b_qol[[s]] * A3_QOL + b_taboo[[s]] * A3_TABOO
+    V[["A1"]] = b_deaths[[s]] * A1_DEATHS + b_qol[[s]] * A1_QOL + b_premium[[s]] * A1_PREM
+    V[["A2"]] = b_deaths[[s]] * A2_DEATHS + b_qol[[s]] * A2_QOL + b_premium[[s]] * A2_PREM
+    V[["A3"]] = asc_sq[[s]] + b_qol[[s]] * A3_QOL
 
     mnl_settings$utilities = V
     mnl_settings$componentName = paste0("Class_",s)

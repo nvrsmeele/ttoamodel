@@ -14,10 +14,10 @@
 # Discrete Choice Experiment: New Organ Transplantation Policy
 #
 # Post-estimation analyses:
-#   - Likelihood Ratio Test between MNL and MNL-TTOA
+#   - Likelihood Ratio Tests
 #   - Willingness-to-pay calculations (incl. Delta method)
 #
-# v1.0 (May, 2025)
+# v1.0 (July, 2025)
 #
 # Corresponding author: Nicholas Smeele (smeele@eshpm.eur.nl)
 #
@@ -35,11 +35,13 @@ apollo_initialise()
 # Initialise estimated models
 benchmark_mnl = "./src/experiment2/results/mnl_benchmark/Benchmark_MNL"
 ttoa_mnl = "./src/experiment2/results/mnl_ttoa/MNL_TTOA"
-ttoa_lc = "./src/experiment2/results/lcl_ttoa/LCL-TTOA"
+rum_lc = "./src/experiment2/results/lc_rum/RUM-LC"
+ttoa_lc = "./src/experiment2/results/lc_ttoa/TTOA-LC"
 
 benchmark_mnl_model = apollo_loadModel(benchmark_mnl)
 ttoa_mnl_model = apollo_loadModel(ttoa_mnl)
-ttoa_lc_model = apollo_loadModel(ttoa_lc)
+lc_rum_model = apollo_loadModel(rum_lc)
+lc_ttoa_model = apollo_loadModel(ttoa_lc)
 
 #####################################################################
 #   Likelihood Ratio Test
@@ -47,6 +49,9 @@ ttoa_lc_model = apollo_loadModel(ttoa_lc)
 
 # Likelihood Ratio Test between benchmark MNL and TTOA-MNL model
 apollo_lrTest(benchmark_mnl_model, ttoa_mnl_model)
+
+# Likelihood ratio test between RUM-LC and TTOA-LC model (note: TTOA-LC model without covariates)
+apollo_lrTest(lc_rum_model, lc_ttoa_model)
 
 #####################################################################
 #   WTP calculations for the Benchmark MNL model
@@ -62,20 +67,34 @@ apollo_deltaMethod(benchmark_mnl_model, deltaMethod_settings)
 
 # Compute WTP and its standard error for the TTOA-MNL model
 deltaMethod_settings=list(expression=c(WTP_deaths="b_deaths/b_premium",
-                                       WTP_taboo="-1*(b_taboo/b_premium)"))
+                                       WTP_taboo="b_taboo/b_premium"))
 
 apollo_deltaMethod(ttoa_mnl_model, deltaMethod_settings)
 
 #####################################################################
-#   WTP calculations for the LCL model
+#   WTP calculations for the benchmark LC model with only RUM classes
 #####################################################################
 
-# Compute WTP and its standard error for the LC model with two "taboo" classes
+# Compute WTP and its standard error for the classes in the LC model
 deltaMethod_settings=list(expression=c(WTP_deaths_1="b_deaths_1/b_premium_1",
                                        WTP_deaths_2="b_deaths_2/b_premium_2",
                                        WTP_deaths_3="b_deaths_3/b_premium_3",
-                                       WTP_taboo_1="-1*(b_taboo_1/b_premium_1)",
+                                       WTP_deaths_4="b_deaths_4/b_premium_4"))
+
+apollo_deltaMethod(lc_rum_model, deltaMethod_settings)
+
+#####################################################################
+#   WTP calculations for the TTOA-LC model
+#####################################################################
+
+# Compute WTP and its standard error for the classes in the LC model
+deltaMethod_settings=list(expression=c(WTP_deaths_1="b_deaths_1/b_premium_1",
+                                       WTP_deaths_2="b_deaths_2/b_premium_2",
+                                       WTP_deaths_3="b_deaths_3/b_premium_3",
+                                       WTP_deaths_4="b_deaths_4/b_premium_4",
+                                       WTP_taboo_1="b_taboo_1/b_premium_1",
                                        WTP_taboo_2="b_taboo_2/b_premium_2",
-                                       WTP_taboo_3="-1*(b_taboo_3/b_premium_3)"))
-                                       
-apollo_deltaMethod(ttoa_lc_model, deltaMethod_settings)
+                                       WTP_taboo_3="b_taboo_3/b_premium_3",
+                                       WTP_taboo_4="b_taboo_4/b_premium_4"))
+
+apollo_deltaMethod(lc_ttoa_model, deltaMethod_settings)

@@ -1,0 +1,41 @@
+? Taboo trade-off aversion in choice behaviours: a discrete choice
+? model and application to health-related decisions
+?
+? Authors: NVR Smeele, S van Cranenburgh, B Donkers, MH Schermer,
+?          EW de Bekker-Grob
+?
+? Affiliations of the corresponding author:
+?          Erasmus School of Health Policy & Management,
+?          Erasmus University Rotterdam,
+?          Erasmus Choice Modelling Centre
+?
+? Discrete Choice Experiment: New Organ Transplantation Policy
+?
+? Ngene syntax for generating the experimental design
+?
+? v1.0 (July, 2025)
+?
+? Corresponding author: Nicholas Smeele (smeele@eshpm.eur.nl)
+
+design
+;alts = alt1, alt2, alt3
+;eff = (mnl, d)
+;alg = mfederov(candidates = H:\Desktop \exp2\exp2_design.xls)
+;rows = 40
+;block = 4
+
+;model:
+U(alt1) = b1.dummy[-0.0002|-0.0004|-0.0006|-0.0008]	* x1[1,2,3,4,0]
+        + b2.dummy[-0.02|-0.04|-0.06]	            * x2[1,2,3,0]
+        + b3.dummy[0.001]                           * x3[1,0]
+	    + b4.dummy[-0.5]                            * t[1,0]
+/
+U(alt2) = b1 * x1
+        + b2 * x2
+        + b3 * x3
+	    + b4 * t
+/
+U(alt3) = b0[0.0002]
+	    + b3 * x3
+        + b4 * t
+$
