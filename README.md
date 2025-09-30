@@ -1,6 +1,6 @@
 # Taboo trade-off aversion in choice behaviors: a discrete choice model and application to health-related decisions
 
-[[Paper]](#) *soon available*
+[[Paper]](https://www.sciencedirect.com/science/article/pii/S0277953625009372)
 [[Data]](#) *soon available*
 
 This repository contains the codebase for the Taboo Trade-off Aversion (TTOA) model to replicate the results from the paper *"Taboo trade-off aversion in choice behaviors: a discrete choice model and application to health-related decisions"*.
